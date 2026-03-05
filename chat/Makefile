@@ -8,10 +8,10 @@ proto/message.pb.go proto/message_grpc.pb.go: proto/message.proto
 	       $<
 
 server: proto
-	go run message-service/main.go
+	go run cmd/server/main.go
 
 gateway: proto
-	go run gateway/main.go
+	go run cmd/gateway/main.go
 
 clean:
 	rm -f proto/*.pb.go
