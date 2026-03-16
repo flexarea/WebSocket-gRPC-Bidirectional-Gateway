@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"context"
 	"time"
+	"xchat.io/internal/manager"
 	pb "xchat.io/proto"
 )
 
@@ -16,13 +17,47 @@ var upgrader = websocket.Upgrader{
 
 type Gateway struct {
 	grpcClient pb.MessageClient
+	hub *manager.Hub
 }
 
-func NewGateway (client pb.MessageClient) *Gateway{
+func NewGateway (client pb.MessageClient, hub *manger.Hub) *Gateway{
 	return &Gateway{
 		grpcClient: client,
+		hub: hub,
 	}
 }
+
+/*
+* Note: This function will create a new goroutine for every incoming connection 
+*/
+func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request){
+
+
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("Upgrade error:", err)
+		return
+	}
+
+	client := &manager.Client{
+		id: uuid.New().String(),
+		conn: conn,
+		send: make(chan []byte, 256),
+	}
+
+	// register to hub
+	
+	g.hub.register <- client
+
+	go client.WritePump()
+	client.ReadPump(g.hub)
+
+
+}
+
+/*
+ * INITIAL CODE
+ ===============
 
 func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
@@ -64,4 +99,6 @@ func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		conn.WriteMessage(messageType, []byte("Echo: "+string(data)))
 	}
 }
+
+*/
 

@@ -1,24 +1,24 @@
 package manager
 
 type Hub struct {
-    clients map[string]*Client
-    register chan *Client
-    unregister chan *Client
-    broadcast chan []byte
+    Clients map[string]*Client
+    Register chan *Client
+    Unregister chan *Client
+    Broadcast chan []byte
 }
 
-func (hub *Hub) run(){
+func (hub *Hub) Run(){
     for{
         select{
-        case client := <-hub.register:
-            h.clients[client.id] = client //register a client | new connection
-        case client := <-hub.unregister:
-            delete(h.clients, client.id] //unregister a client | client disconnect
+        case client := <-hub.Register:
+            h.Clients[client.id] = client //register a client | new connection
+        case client := <-hub.Unregister:
+            delete(h.Clients, client.id] //unregister a client | client disconnect
             close(client.send) //close goroutine
-        case message := <-hub.broadcast: //broad cast to all clients
-            for _, c := range h.clients {
+        case message := <-hub.Broadcast: //broad cast to all clients
+            for _, c := range h.Clients {
                     select{
-                        case c.send <- message: // send message
+                        case c.Send <- message: // send message
                         default:
                     }
                 }
