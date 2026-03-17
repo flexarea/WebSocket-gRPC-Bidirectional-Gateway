@@ -10,18 +10,22 @@ type Hub struct {
 func (hub *Hub) Run(){
     for{
         select{
-        case client := <-hub.Register:
-            h.Clients[client.id] = client //register a client | new connection
-        case client := <-hub.Unregister:
-            delete(h.Clients, client.id] //unregister a client | client disconnect
-            close(client.send) //close goroutine
+        case c := <-hub.Register:
+            hub.Clients[c.Id] = c //register a client | new connection
+        case c := <-hub.Unregister:
+        if _, ok := hub.Clients[c.Id]; ok {
+                    delete(hub.Clients, c.Id) //unregister a client | client disconnect
+                    close(c.Send) //close goroutine
+            }
         case message := <-hub.Broadcast: //broad cast to all clients
-            for _, c := range h.Clients {
-                    select{
-                        case c.Send <- message: // send message
-                        default:
-                    }
+            for _, c := range hub.Clients {
+                select{
+                case c.Send <- message: // send message
+                default:
+                    close(c.Send)
+                    delete(hub.Clients, c.Id) 
                 }
+            }
         }
     }
 }

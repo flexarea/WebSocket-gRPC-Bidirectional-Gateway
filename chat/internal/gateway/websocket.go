@@ -8,6 +8,7 @@ import (
 	"context"
 	"time"
 	"xchat.io/internal/manager"
+	"github.com/google/uuid" // Don't forget this import!
 	pb "xchat.io/proto"
 )
 
@@ -20,7 +21,7 @@ type Gateway struct {
 	hub *manager.Hub
 }
 
-func NewGateway (client pb.MessageClient, hub *manger.Hub) *Gateway{
+func NewGateway (client pb.MessageClient, hub *manager.Hub) *Gateway{
 	return &Gateway{
 		grpcClient: client,
 		hub: hub,
@@ -30,6 +31,26 @@ func NewGateway (client pb.MessageClient, hub *manger.Hub) *Gateway{
 /*
 * Note: This function will create a new goroutine for every incoming connection 
 */
+
+func (g *Gateway) Process(message []byte) ([]byte, error){
+	// Setup the context for gRPC
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	// Make the gRPC Unary Call
+	resp, err := g.grpcClient.HandleMessage(ctx, &pb.MessageRequest{
+		Content:    string(message),
+		SrcUserId:  214,
+		DestUserId: 40,
+	})
+
+	if err != nil {
+		return nil, err // Return the error back to the ReadPump
+	}
+
+	return []byte(resp.Content), nil
+}
+
 func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request){
 
 
@@ -40,17 +61,20 @@ func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request){
 	}
 
 	client := &manager.Client{
-		id: uuid.New().String(),
-		conn: conn,
-		send: make(chan []byte, 256),
+		Id: uuid.New().String(),
+		Conn: conn,
+		Send: make(chan []byte, 256),
 	}
+
+	// log new client
+	fmt.Println("New client ID: ", client.Id)
 
 	// register to hub
 	
-	g.hub.register <- client
+	g.hub.Register <- client
 
 	go client.WritePump()
-	client.ReadPump(g.hub)
+	client.ReadPump(g.hub, g)
 
 
 }

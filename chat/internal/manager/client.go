@@ -1,9 +1,7 @@
 package manager
 
 import (
-    "sync"
     "fmt"
-    "github.com/google/uuid"
     "github.com/gorilla/websocket"
 )
 
@@ -13,11 +11,15 @@ type Client struct {
     Send chan []byte
 }
 
-func (c *Client) ReadPump(hub *Hub, g*Gateway){
+type MessageHandler interface{
+    Process(message []byte) ([]byte, error)
+}
+
+func (c *Client) ReadPump(hub *Hub, handler MessageHandler){
 
     // Tear down
     defer func(){
-        hub.unregister <- c
+        hub.Unregister <- c
         c.Conn.Close()
     }()
 
@@ -29,41 +31,35 @@ func (c *Client) ReadPump(hub *Hub, g*Gateway){
             break
         }
 
-        ctx, cancel := context.WithTimeout(context.Background(), time.second)
 
-
-        resp, err := g.grpcClient.HandleMessage(ctx, &pb.MessageRequest{
-            Content: string(message),	
-            SrcUserId: 214,	
-            DestUserId: 40,	
-        })
-
-        if err != nil { 
-            fmt.Println("Error from gRPC server: ", err)
-            cancel()
+        // 3. Call the interface method!
+        resp, err := handler.Process(message)
+        if err != nil {
+            fmt.Println("Processing error:", err)
             continue
         }
 
-        cancel()
-
-        c.Send <- []byte(resp.Content)
+        // Drop the response onto the conveyor belt
+        hub.Broadcast <- resp
 
     }
 
 }
 
 /*
-    TODO: Is it possible to have a single writePump for all conections?
+TODO: Is it possible to have a single writePump for all conections?
 */
 func (c *Client) WritePump(){
     defer c.Conn.Close()
 
-    for message := range c.send{
+    // Blocking loop listening to channel 
+    for message := range c.Send{
         err := c.Conn.WriteMessage(websocket.TextMessage, message)
         if err != nil { 
             break
         }
     }
 
+    // WS Close signal
     c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
 }
