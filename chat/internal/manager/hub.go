@@ -1,10 +1,11 @@
 package manager
 
+
 type Hub struct {
     Clients map[string]*Client
     Register chan *Client
     Unregister chan *Client
-    Broadcast chan []byte
+    Broadcast chan *ClientMessage
 }
 
 func (hub *Hub) Run(){

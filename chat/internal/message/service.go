@@ -21,7 +21,8 @@ func (s *MessageServer) HandleMessage(ctx context.Context, req *pb.MessageReques
 
 	return &pb.MessageReply{
 		Content: fmt.Sprintf("From gRPC Server: received message %s from %d", rqMessage, srcUserId),
-		SrcUserId: 040,
-		DestUserId: srcUserId,
+		SrcUserId: req.SrcUserId,
+		DestUserId: req.DestUserId,
+		Timestamp: req.Timestamp,
 	}, nil
 }

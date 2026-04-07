@@ -7,10 +7,12 @@ import (
 	"net/http"
 	"context"
 	"time"
+	"encoding/json"
 	"xchat.io/internal/manager"
 	"github.com/google/uuid" // Don't forget this import!
 	pb "xchat.io/proto"
 )
+
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true},
@@ -32,23 +34,37 @@ func NewGateway (client pb.MessageClient, hub *manager.Hub) *Gateway{
 * Note: This function will create a new goroutine for every incoming connection 
 */
 
-func (g *Gateway) Process(message []byte) ([]byte, error){
+func (g *Gateway) Process(message []byte) (*manager.ClientMessage, error){
 	// Setup the context for gRPC
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	// Make the gRPC Unary Call
+
+	var WSMsg manager.ClientMessage
+
+        if err := json.Unmarshal(message, &WSMsg); err != nil {
+            log.Println("error parsing json payload", err)
+        }
+
 	resp, err := g.grpcClient.HandleMessage(ctx, &pb.MessageRequest{
-		Content:    string(message),
-		SrcUserId:  214,
-		DestUserId: 40,
+		Content:    WSMsg.Content,
+		SrcUserId:  WSMsg.SrcUserId,
+		DestUserId: WSMsg.DestUserId,
+		Timestamp: WSMsg.Timestamp,
 	})
 
 	if err != nil {
 		return nil, err // Return the error back to the ReadPump
 	}
 
-	return []byte(resp.Content), nil
+	//return []byte(resp.Content), nil
+	return &manager.ClientMessage{
+		Content:    resp.Content,
+		SrcUserId:  resp.SrcUserId,
+		DestUserId: resp.DestUserId,
+		Timestamp: resp.Timestamp,
+	}, nil
 }
 
 func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request){
@@ -60,10 +76,11 @@ func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
+
 	client := &manager.Client{
 		Id: uuid.New().String(),
 		Conn: conn,
-		Send: make(chan []byte, 256),
+		Send: make(chan *manager.ClientMessage),
 	}
 
 	// log new client

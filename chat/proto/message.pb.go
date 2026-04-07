@@ -26,6 +26,7 @@ type MessageRequest struct {
 	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 	SrcUserId     int32                  `protobuf:"varint,2,opt,name=src_user_id,json=srcUserId,proto3" json:"src_user_id,omitempty"`
 	DestUserId    int32                  `protobuf:"varint,3,opt,name=dest_user_id,json=destUserId,proto3" json:"dest_user_id,omitempty"`
+	Timestamp     int64                  `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -81,11 +82,19 @@ func (x *MessageRequest) GetDestUserId() int32 {
 	return 0
 }
 
+func (x *MessageRequest) GetTimestamp() int64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 type MessageReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 	SrcUserId     int32                  `protobuf:"varint,2,opt,name=src_user_id,json=srcUserId,proto3" json:"src_user_id,omitempty"`
 	DestUserId    int32                  `protobuf:"varint,3,opt,name=dest_user_id,json=destUserId,proto3" json:"dest_user_id,omitempty"`
+	Timestamp     int64                  `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -141,21 +150,30 @@ func (x *MessageReply) GetDestUserId() int32 {
 	return 0
 }
 
+func (x *MessageReply) GetTimestamp() int64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 var File_proto_message_proto protoreflect.FileDescriptor
 
 const file_proto_message_proto_rawDesc = "" +
 	"\n" +
-	"\x13proto/message.proto\x12\amessage\"l\n" +
+	"\x13proto/message.proto\x12\amessage\"\x8a\x01\n" +
 	"\x0eMessageRequest\x12\x18\n" +
 	"\acontent\x18\x01 \x01(\tR\acontent\x12\x1e\n" +
 	"\vsrc_user_id\x18\x02 \x01(\x05R\tsrcUserId\x12 \n" +
 	"\fdest_user_id\x18\x03 \x01(\x05R\n" +
-	"destUserId\"j\n" +
+	"destUserId\x12\x1c\n" +
+	"\ttimestamp\x18\x04 \x01(\x03R\ttimestamp\"\x88\x01\n" +
 	"\fMessageReply\x12\x18\n" +
 	"\acontent\x18\x01 \x01(\tR\acontent\x12\x1e\n" +
 	"\vsrc_user_id\x18\x02 \x01(\x05R\tsrcUserId\x12 \n" +
 	"\fdest_user_id\x18\x03 \x01(\x05R\n" +
-	"destUserId2J\n" +
+	"destUserId\x12\x1c\n" +
+	"\ttimestamp\x18\x04 \x01(\x03R\ttimestamp2J\n" +
 	"\aMessage\x12?\n" +
 	"\rHandleMessage\x12\x17.message.MessageRequest\x1a\x15.message.MessageReplyB\x18Z\x16xchat.io/message/protob\x06proto3"
 
