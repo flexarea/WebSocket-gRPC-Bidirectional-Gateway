@@ -120,42 +120,6 @@ Status code distribution:
 ## Duration-based load test
 
 ```
-Summary:
-  Count:	178929
-  Total:	10.00 s
-  Slowest:	3.38 ms
-  Fastest:	0.13 ms
-  Average:	0.36 ms
-  Requests/sec:	17895.44
-
-Response time histogram:
-  0.125 [1]      |
-  0.451 [154475] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  0.777 [16662]  |∎∎∎∎
-  1.102 [5250]   |∎
-  1.428 [1988]   |∎
-  1.753 [484]    |
-  2.079 [40]     |
-  2.404 [13]     |
-  2.730 [0]      |
-  3.055 [4]      |
-  3.381 [2]      |
-
-Latency distribution:
-  10 % in 0.22 ms
-  25 % in 0.26 ms
-  50 % in 0.32 ms
-  75 % in 0.39 ms
-  90 % in 0.49 ms
-  95 % in 0.73 ms
-  99 % in 1.20 ms
-
-Status code distribution:
-  [OK]            178919 responses
-  [Unavailable]   10 responses
-
-Error distribution:
-  [10]   rpc error: code = Unavailable desc = error reading from server: read tcp 127.0.0.1:59024->127.0.0.1:50051: use of closed network connection
 ```
 
 ## Comparison
