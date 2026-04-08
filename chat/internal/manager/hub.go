@@ -17,7 +17,8 @@ func (hub *Hub) Run(){
         if _, ok := hub.Clients[c.Id]; ok {
                     delete(hub.Clients, c.Id) //unregister a client | client disconnect
                     close(c.Send) //close goroutine
-            }
+        }
+        /*
         case message := <-hub.Broadcast: //broad cast to all clients
             for _, c := range hub.Clients {
                 select{
@@ -27,6 +28,7 @@ func (hub *Hub) Run(){
                     delete(hub.Clients, c.Id) 
                 }
             }
+*/
         }
     }
 }

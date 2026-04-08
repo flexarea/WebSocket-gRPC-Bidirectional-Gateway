@@ -1,6 +1,8 @@
-## Test 1
-
 ```
+     execution: local
+        script: gatewayBenchMark.js
+        output: -
+
      scenarios: (100.00%) 1 scenario, 50 max VUs, 40s max duration (incl. graceful stop):
               * default: 50 looping VUs for 10s (gracefulStop: 30s)
 
@@ -8,58 +10,30 @@
 
   █ TOTAL RESULTS
 
-    checks_total.......: 102405  10236.296104/s
-    checks_succeeded...: 100.00% 102405 out of 102405
-    checks_failed......: 0.00%   0 out of 102405
+    checks_total.......: 47162   4711.069055/s
+    checks_succeeded...: 100.00% 47162 out of 47162
+    checks_failed......: 0.00%   0 out of 47162
 
-    ✓ response received
+    ✓ latency < 50ms
 
-    EXECUTION
-    iteration_duration....: avg=4.85ms min=519.65µs med=4.19ms max=66.96ms p(90)=8.46ms p(95)=10.19ms
-    iterations............: 102405 10236.296104/s
-    vus...................: 50     min=50         max=50
-    vus_max...............: 50     min=50         max=50
-
-    NETWORK
-    data_received.........: 65 MB  6.5 MB/s
-    data_sent.............: 26 MB  2.6 MB/s
-
-    WEBSOCKET
-    ws_connecting.........: avg=3.03ms min=242.31µs med=2.3ms  max=26.05ms p(90)=6.3ms  p(95)=7.98ms
-    ws_msgs_received......: 102405 10236.296104/s
-    ws_msgs_sent..........: 102405 10236.296104/s
-    ws_session_duration...: avg=4.8ms  min=489.95µs med=4.13ms max=66.86ms p(90)=8.4ms  p(95)=10.13ms
-    ws_sessions...........: 102405 10236.296104/s
-
-```
-
-
-
-## Test 2
-
-```
- █ TOTAL RESULTS
-
-    checks_total.......: 2160096 182486.090225/s
-    checks_succeeded...: 100.00% 2160096 out of 2160096
-    checks_failed......: 0.00%   0 out of 2160096
-
-    ✓ response received
+    CUSTOM
+    msg_latency...........: avg=3.08ms min=0s       med=3ms    max=11ms  p(90)=4ms    p(95)=5ms
 
     EXECUTION
-    iteration_duration....: avg=5.85s  min=5.36s    med=5.8s   max=6.46s  p(90)=6.31s  p(95)=6.35s
-    iterations............: 100     8.448055/s
-    vus...................: 50      min=50          max=50
-    vus_max...............: 50      min=50          max=50
+    iteration_duration....: avg=10s    min=10s      med=10s    max=10s   p(90)=10s    p(95)=10s
+    iterations............: 50     4.99456/s
+    vus...................: 50     min=50        max=50
+    vus_max...............: 50     min=50        max=50
 
     NETWORK
-    data_received.........: 212 MB  18 MB/s
-    data_sent.............: 58 MB   4.9 MB/s
+    data_received.........: 5.6 MB 557 kB/s
+    data_sent.............: 4.0 MB 397 kB/s
 
     WEBSOCKET
-    ws_connecting.........: avg=2.04ms min=424.32µs med=1.71ms max=9.78ms p(90)=3.52ms p(95)=4.27ms
-    ws_msgs_received......: 2160096 182486.090225/s
-    ws_msgs_sent..........: 1000000 84480.546339/s
-    ws_session_duration...: avg=5.85s  min=5.36s    med=5.8s   max=6.46s  p(90)=6.31s  p(95)=6.35s
-    ws_sessions...........: 100     8.448055/s
+    ws_connecting.........: avg=2.96ms min=549.64µs med=3.04ms max=4.1ms p(90)=3.74ms p(95)=3.86ms
+    ws_msgs_received......: 47162  4711.069055/s
+    ws_msgs_sent..........: 47173  4712.167858/s
+    ws_session_duration...: avg=10s    min=10s      med=10s    max=10s   p(90)=10s    p(95)=10s
+    ws_sessions...........: 50     4.99456/s
+
 ```

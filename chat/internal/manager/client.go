@@ -50,7 +50,8 @@ func (c *Client) ReadPump(hub *Hub, handler MessageHandler){
         }
 
         // Drop the response onto the conveyor belt
-        hub.Broadcast <- resp
+        //hub.Broadcast <- resp
+        c.Send <- resp
 
     }
 

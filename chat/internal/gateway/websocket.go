@@ -80,7 +80,7 @@ func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request){
 	client := &manager.Client{
 		Id: uuid.New().String(),
 		Conn: conn,
-		Send: make(chan *manager.ClientMessage),
+		Send: make(chan *manager.ClientMessage, 256),
 	}
 
 	// log new client
@@ -93,53 +93,5 @@ func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request){
 	go client.WritePump()
 	client.ReadPump(g.hub, g)
 
-
 }
-
-/*
- * INITIAL CODE
- ===============
-
-func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
-
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Upgrade error:", err)
-		return
-	}
-	defer conn.Close()
-
-	fmt.Println("Client connected")
-	conn.WriteMessage(websocket.TextMessage, []byte("Connected to echo server!"))
-
-	// read message from Websocket
-	for {
-
-		messageType, data, err := conn.ReadMessage()
-		if err != nil {
-			fmt.Println("Client disconnected")
-			break
-		}
-
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-
-		defer cancel()
-
-		resp, err := g.grpcClient.HandleMessage(ctx, &pb.MessageRequest{
-			Content: string(data),	
-			SrcUserId: 214,	
-			DestUserId: 040,	
-		})
-
-		if err != nil { 
-			log.Fatal(err) 
-		}
-	
-		fmt.Println(resp.Content) //gRPC server output
-
-		conn.WriteMessage(messageType, []byte("Echo: "+string(data)))
-	}
-}
-
-*/
 
