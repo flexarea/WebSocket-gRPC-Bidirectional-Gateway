@@ -14,7 +14,7 @@ export default function () {
 
     socket.on('message', (data) => {
       const msg = JSON.parse(data);
-      const latency = Date.now() - msg.Timestamp;
+      const latency = Date.now() - msg.timestamp;
       msgLatency.add(latency);
       check(latency, { 'latency < 50ms': (l) => l < 50 });
     });
