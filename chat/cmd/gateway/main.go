@@ -46,7 +46,7 @@ func main() {
 		Clients:    make(map[string]*manager.Client),
 		Register:   make(chan *manager.Client),
 		Unregister: make(chan *manager.Client),
-		Broadcast:  make(chan []byte),
+		Broadcast:  make(chan *manager.ClientMessage),
 	}
 
 	// Inject the client into your gateway struct
