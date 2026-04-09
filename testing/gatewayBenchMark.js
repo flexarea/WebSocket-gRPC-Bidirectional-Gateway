@@ -17,28 +17,31 @@ export default function () {
       const latency = Date.now() - msg.timestamp;
       msgLatency.add(latency);
       check(latency, { 'latency < 50ms': (l) => l < 50 });
+
+      // send next immediately after receiving reply
+      socket.send(JSON.stringify({
+        content: 'hello',
+        src_user_id: 1,
+        dest_user_id: 2,
+        timestamp: Date.now(),
+      }));
     });
 
     socket.on('open', () => {
-      let i = 0;
 
-      function sendNext() {
-        if (i >= 10000) return;
-
-        socket.send(JSON.stringify({
-          content: 'hello',
-          src_user_id: 1,
-          dest_user_id: 2,
-          timestamp: Date.now(), // timestamp set at send time
-        }));
-
-        i++;
-        socket.setTimeout(sendNext, 10);
-      }
-
-      sendNext();
+      // ping-pong
+      socket.send(JSON.stringify({
+        content: 'hello',
+        src_user_id: 1,
+        dest_user_id: 2,
+        timestamp: Date.now(),
+      }));
     });
 
-    socket.setTimeout(() => socket.close(), 10000);
+    // close connection timeout
+    socket.setTimeout(() => {
+      socket.close();
+    }, 10000);
+
   });
 }
