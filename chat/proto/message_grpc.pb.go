@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MessageClient interface {
-	HandleMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error)
+	HandleMessage(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ChatMessage, ChatMessage], error)
 }
 
 type messageClient struct {
@@ -37,21 +37,24 @@ func NewMessageClient(cc grpc.ClientConnInterface) MessageClient {
 	return &messageClient{cc}
 }
 
-func (c *messageClient) HandleMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*MessageReply, error) {
+func (c *messageClient) HandleMessage(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ChatMessage, ChatMessage], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(MessageReply)
-	err := c.cc.Invoke(ctx, Message_HandleMessage_FullMethodName, in, out, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &Message_ServiceDesc.Streams[0], Message_HandleMessage_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &grpc.GenericClientStream[ChatMessage, ChatMessage]{ClientStream: stream}
+	return x, nil
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Message_HandleMessageClient = grpc.BidiStreamingClient[ChatMessage, ChatMessage]
 
 // MessageServer is the server API for Message service.
 // All implementations must embed UnimplementedMessageServer
 // for forward compatibility.
 type MessageServer interface {
-	HandleMessage(context.Context, *MessageRequest) (*MessageReply, error)
+	HandleMessage(grpc.BidiStreamingServer[ChatMessage, ChatMessage]) error
 	mustEmbedUnimplementedMessageServer()
 }
 
@@ -62,8 +65,8 @@ type MessageServer interface {
 // pointer dereference when methods are called.
 type UnimplementedMessageServer struct{}
 
-func (UnimplementedMessageServer) HandleMessage(context.Context, *MessageRequest) (*MessageReply, error) {
-	return nil, status.Error(codes.Unimplemented, "method HandleMessage not implemented")
+func (UnimplementedMessageServer) HandleMessage(grpc.BidiStreamingServer[ChatMessage, ChatMessage]) error {
+	return status.Error(codes.Unimplemented, "method HandleMessage not implemented")
 }
 func (UnimplementedMessageServer) mustEmbedUnimplementedMessageServer() {}
 func (UnimplementedMessageServer) testEmbeddedByValue()                 {}
@@ -86,23 +89,12 @@ func RegisterMessageServer(s grpc.ServiceRegistrar, srv MessageServer) {
 	s.RegisterService(&Message_ServiceDesc, srv)
 }
 
-func _Message_HandleMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MessageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MessageServer).HandleMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Message_HandleMessage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServer).HandleMessage(ctx, req.(*MessageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+func _Message_HandleMessage_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MessageServer).HandleMessage(&grpc.GenericServerStream[ChatMessage, ChatMessage]{ServerStream: stream})
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Message_HandleMessageServer = grpc.BidiStreamingServer[ChatMessage, ChatMessage]
 
 // Message_ServiceDesc is the grpc.ServiceDesc for Message service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -110,12 +102,14 @@ func _Message_HandleMessage_Handler(srv interface{}, ctx context.Context, dec fu
 var Message_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "message.Message",
 	HandlerType: (*MessageServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "HandleMessage",
-			Handler:    _Message_HandleMessage_Handler,
+			StreamName:    "HandleMessage",
+			Handler:       _Message_HandleMessage_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/message.proto",
 }
