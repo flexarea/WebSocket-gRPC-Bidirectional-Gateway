@@ -26,7 +26,7 @@ type ChatMessage struct {
 	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 	SrcUserId     int32                  `protobuf:"varint,2,opt,name=src_user_id,json=srcUserId,proto3" json:"src_user_id,omitempty"`
 	DestUserId    int32                  `protobuf:"varint,3,opt,name=dest_user_id,json=destUserId,proto3" json:"dest_user_id,omitempty"`
-	Timestamp     int32                  `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Timestamp     int64                  `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -82,7 +82,7 @@ func (x *ChatMessage) GetDestUserId() int32 {
 	return 0
 }
 
-func (x *ChatMessage) GetTimestamp() int32 {
+func (x *ChatMessage) GetTimestamp() int64 {
 	if x != nil {
 		return x.Timestamp
 	}
@@ -99,7 +99,7 @@ const file_proto_message_proto_rawDesc = "" +
 	"\vsrc_user_id\x18\x02 \x01(\x05R\tsrcUserId\x12 \n" +
 	"\fdest_user_id\x18\x03 \x01(\x05R\n" +
 	"destUserId\x12\x1c\n" +
-	"\ttimestamp\x18\x04 \x01(\x05R\ttimestamp2J\n" +
+	"\ttimestamp\x18\x04 \x01(\x03R\ttimestamp2J\n" +
 	"\aMessage\x12?\n" +
 	"\rHandleMessage\x12\x14.message.chatMessage\x1a\x14.message.chatMessage(\x010\x01B\x18Z\x16xchat.io/message/protob\x06proto3"
 

@@ -1,8 +1,8 @@
 package message
 
 import (
-	"context"
-	"fmt"
+	"io"
+	"log"
 	pb "xchat.io/proto"
 )
 
@@ -14,14 +14,32 @@ func NewMessageServer() *MessageServer {
 	return &MessageServer{}
 }
 
-func (s *MessageServer) HandleMessage(stream grpc.BidiStreamingServer[pb.ChatMessage, pb.ChatMessage]) error {
+func (s *MessageServer) HandleMessage(stream pb.Message_HandleMessageServer) error {
 
 	outgoing := make(chan *pb.ChatMessage)
+
+	// SEND loop
+	go func(){
+		for msg := range outgoing {
+			if err := stream.Send(msg); err != nil {
+				log.Println("Something broke", err)
+				break
+			}
+		}
+
+	}()
 
 	// RECEIVE loop
 	for {
 		msg, err := stream.Recv()
+
+		if err == io.EOF {
+			log.Println("The server closed the stream.")
+			return nil
+		}
+
 		if err != nil {
+			log.Println("Something broke", err)
 			return err
 		}
 
@@ -31,23 +49,5 @@ func (s *MessageServer) HandleMessage(stream grpc.BidiStreamingServer[pb.ChatMes
 		}
 	}
 
-	// SEND loop
-	go func(){
-		for msg := range outgoing {
-			if err := stream.Send(msg); err != nil {
-				return
-			}
-		}
 
-	}{}
-
-rqMessage := req.Content
-srcUserId := req.SrcUserId
-
-return &pb.MessageReply{
-	Content: fmt.Sprintf("From gRPC Server: received message %s from %d", rqMessage, srcUserId),
-	SrcUserId: req.SrcUserId,
-	DestUserId: req.DestUserId,
-	Timestamp: req.Timestamp,
-}, nil
 }

@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 	"context"
-	"time"
-	"encoding/json"
 	"xchat.io/internal/manager"
 	"github.com/google/uuid" // Don't forget this import!
 	pb "xchat.io/proto"
@@ -19,7 +17,7 @@ var upgrader = websocket.Upgrader{
 }
 
 type Gateway struct {
-	grpcClient pb.Message_HandleMessageClient
+	grpcClient pb.MessageClient
 	hub *manager.Hub
 }
 
@@ -49,7 +47,7 @@ func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request){
 
 	if err != nil {
 		log.Println("Failed to create stream:", err)
-		return err
+		return
 	}
 
 	client := &manager.Client{
@@ -67,7 +65,7 @@ func (g *Gateway) HandleWebSocket(w http.ResponseWriter, r *http.Request){
 
 	// spin goroutines
 	go client.WritePump()
-	go client.ListenStream()
+	go client.ListenGrpcStream()
 	client.ReadPump(g.hub)
 
 }

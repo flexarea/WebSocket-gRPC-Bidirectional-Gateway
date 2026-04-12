@@ -2,8 +2,11 @@ package manager
 
 import (
     "fmt"
+    "io"
+    "log"
     "github.com/gorilla/websocket"
     "encoding/json"
+    pb "xchat.io/proto"
 )
 
 type ClientMessage struct{
@@ -45,7 +48,7 @@ func (c *Client) ReadPump(hub *Hub){
         }
 
         // WS JSON Payload Struct
-        var WSMsg manager.ClientMessage
+        var WSMsg ClientMessage
 
         // parse WS JSON Payload
         if err := json.Unmarshal(rawMsg, &WSMsg); err != nil {
@@ -62,8 +65,8 @@ func (c *Client) ReadPump(hub *Hub){
 
 
         if err != nil {
-            log.Println("Error processing gRPC:", err)
-            continue
+            log.Println("Send failed. Stopping ReadPump:", err)
+            break
         }
 
         //c.Send <- resp
@@ -77,12 +80,22 @@ func (c *Client) ListenGrpcStream(){
 
         msg, err := c.Stream.Recv()
 
-        if err != nil {
-            log.Println("Error processing gRPC reply:", err)
+        if err == io.EOF {
+            log.Println("The server closed the stream.")
+            return 
         }
 
-        c.Send <- msg
+        if err != nil {
+            log.Println("Error processing gRPC reply:", err)
+            return
+        }
 
+        c.Send <- &ClientMessage{
+            Content: msg.Content,
+            SrcUserId: msg.SrcUserId,
+            DestUserId: msg.DestUserId,
+            Timestamp: msg.Timestamp,
+        }
     }
 }
 
