@@ -76,6 +76,8 @@ func (c *Client) ReadPump(hub *Hub){
 
 func (c *Client) ListenGrpcStream(){
 
+    defer close(c.Send)
+
     for{
 
         msg, err := c.Stream.Recv()
@@ -89,6 +91,9 @@ func (c *Client) ListenGrpcStream(){
             log.Println("Error processing gRPC reply:", err)
             return
         }
+
+        log.Printf("Received from gRPC: %+v", msg)
+
 
         c.Send <- &ClientMessage{
             Content: msg.Content,

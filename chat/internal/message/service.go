@@ -20,6 +20,7 @@ func (s *MessageServer) HandleMessage(stream pb.Message_HandleMessageServer) err
 
 	// SEND loop
 	go func(){
+
 		for msg := range outgoing {
 			if err := stream.Send(msg); err != nil {
 				log.Println("Something broke", err)
@@ -28,6 +29,8 @@ func (s *MessageServer) HandleMessage(stream pb.Message_HandleMessageServer) err
 		}
 
 	}()
+
+	defer close(outgoing)
 
 	// RECEIVE loop
 	for {
@@ -46,6 +49,9 @@ func (s *MessageServer) HandleMessage(stream pb.Message_HandleMessageServer) err
 		// send back message
 		outgoing <- &pb.ChatMessage{
 			Content: "echo: " + msg.Content,
+			SrcUserId: msg.SrcUserId,
+			DestUserId: msg.DestUserId,
+			Timestamp: msg.Timestamp,
 		}
 	}
 
