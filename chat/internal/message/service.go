@@ -1,8 +1,8 @@
 package message
 
 import (
-	"context"
-	"fmt"
+	"io"
+	"log"
 	pb "xchat.io/proto"
 )
 
@@ -14,15 +14,46 @@ func NewMessageServer() *MessageServer {
 	return &MessageServer{}
 }
 
-func (s *MessageServer) HandleMessage(ctx context.Context, req *pb.MessageRequest) (*pb.MessageReply, error) {
+func (s *MessageServer) HandleMessage(stream pb.Message_HandleMessageServer) error {
 
-	rqMessage := req.Content
-	srcUserId := req.SrcUserId
+	outgoing := make(chan *pb.ChatMessage)
 
-	return &pb.MessageReply{
-		Content: fmt.Sprintf("From gRPC Server: received message %s from %d", rqMessage, srcUserId),
-		SrcUserId: req.SrcUserId,
-		DestUserId: req.DestUserId,
-		Timestamp: req.Timestamp,
-	}, nil
+	// SEND loop
+	go func(){
+
+		for msg := range outgoing {
+			if err := stream.Send(msg); err != nil {
+				log.Println("Something broke", err)
+				break
+			}
+		}
+
+	}()
+
+	defer close(outgoing)
+
+	// RECEIVE loop
+	for {
+		msg, err := stream.Recv()
+
+		if err == io.EOF {
+			log.Println("The server closed the stream.")
+			return nil
+		}
+
+		if err != nil {
+			log.Println("Something broke", err)
+			return err
+		}
+
+		// send back message
+		outgoing <- &pb.ChatMessage{
+			Content: "echo: " + msg.Content,
+			SrcUserId: msg.SrcUserId,
+			DestUserId: msg.DestUserId,
+			Timestamp: msg.Timestamp,
+		}
+	}
+
+
 }
