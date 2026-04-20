@@ -33,12 +33,12 @@
     ws_sessions...........: 50     4.995613/s
 ```
 
-| Metric | Unary gRPC (ghz) | Unary WS+gRPC (k6) | Unary gRPC layer | Unary WS overhead | Unary Delta | Bidi gRPC (ghz) | Bidi WS+gRPC (k6) | Bidi gRPC layer | Bidi WS overhead | Bidi Delta |
-|--------|-----------------|-------------------|-----------------|-------------------|-------------|-----------------|------------------|-----------------|------------------|------------|
-| req/sec | 34,970 | 14,016 | — | — | -20,954 | 27,794 | 22,524 | — | — | -5,270 |
-| p50 | 0.93ms | 3ms | 2.70ms | 0.30ms | +2.07ms | 1.40ms | ~0ms | 0.197ms | ~0ms | -1.40ms |
-| p90 | — | 4.99ms | 3.88ms | 1.11ms | — | — | 1ms | 0.493ms | 0.507ms | — |
-| p95 | 2.17ms | 5ms | 4.30ms | 0.70ms | +2.83ms | 2.58ms | 1.99ms | 0.988ms | 1.002ms | -0.59ms |
+| Metric | WS+gRPC total | gRPC layer | WS overhead |
+|--------|--------------|------------|-------------|
+| req/sec | 22,524 | — | — |
+| p50 | ~0ms* | 0.197ms | ~0ms* |
+| p90 | 1ms | 0.493ms | 0.507ms |
+| p95 | 1.99ms | 0.988ms | 1.002ms |
 
 > Note: msg_latency p50 for bidi WS+gRPC reports 0ms due to Date.now() 
 > millisecond resolution limitations in k6. Actual latency is sub-millisecond, 
