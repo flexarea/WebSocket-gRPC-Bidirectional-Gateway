@@ -4,4 +4,6 @@ ghz --insecure \
     --data '{"content": "hello", "src_user_id": 1, "dest_user_id": 2}' \
     --concurrency 50 \
     --duration 10s \
+    --stream-call-duration=10s \
+    --stream-interval=1ms \
     localhost:50051

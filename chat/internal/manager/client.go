@@ -4,6 +4,7 @@ import (
     "fmt"
     "io"
     "log"
+    "time"
     "github.com/gorilla/websocket"
     "encoding/json"
     pb "xchat.io/proto"
@@ -14,6 +15,7 @@ type ClientMessage struct{
     SrcUserId int32 `json:"src_user_id"`
     DestUserId int32 `json:"dest_user_id"`
     Timestamp int64 `json:"timestamp"`
+    GRPCTime int64 `json:"grpcTime"`
 }
 
 type Client struct {
@@ -61,6 +63,7 @@ func (c *Client) ReadPump(hub *Hub){
             SrcUserId:  WSMsg.SrcUserId,
             DestUserId: WSMsg.DestUserId,
             Timestamp: WSMsg.Timestamp,
+            GRPCTime: time.Now().UnixNano(),
         })
 
 
@@ -92,14 +95,16 @@ func (c *Client) ListenGrpcStream(){
             return
         }
 
-        log.Printf("Received from gRPC: %+v", msg)
+        //log.Printf("Received from gRPC: %+v", msg)
 
+        grpcLatencyMs := time.Now().UnixNano()-msg.GRPCTime
 
         c.Send <- &ClientMessage{
             Content: msg.Content,
             SrcUserId: msg.SrcUserId,
             DestUserId: msg.DestUserId,
             Timestamp: msg.Timestamp,
+	    GRPCTime: grpcLatencyMs,
         }
     }
 }
@@ -111,6 +116,7 @@ func (c *Client) WritePump(){
     for message := range c.Send{
 
         JSONdata,_ := json.Marshal(*message)
+
         err := c.Conn.WriteMessage(websocket.TextMessage, JSONdata)
 
         if err != nil { 

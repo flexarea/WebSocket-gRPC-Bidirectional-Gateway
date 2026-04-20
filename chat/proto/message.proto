@@ -13,4 +13,5 @@ message chatMessage {
         int32 src_user_id = 2;
         int32 dest_user_id = 3;
         int64 timestamp = 4;
+        int64 gRPCTime = 5;
 }

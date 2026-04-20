@@ -46,12 +46,14 @@ func (s *MessageServer) HandleMessage(stream pb.Message_HandleMessageServer) err
 			return err
 		}
 
+
 		// send back message
 		outgoing <- &pb.ChatMessage{
 			Content: "echo: " + msg.Content,
 			SrcUserId: msg.SrcUserId,
 			DestUserId: msg.DestUserId,
 			Timestamp: msg.Timestamp,
+			GRPCTime: msg.GRPCTime,
 		}
 	}
 
