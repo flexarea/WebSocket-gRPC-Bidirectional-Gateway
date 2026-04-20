@@ -24,5 +24,6 @@ func (s *MessageServer) HandleMessage(ctx context.Context, req *pb.MessageReques
 		SrcUserId: req.SrcUserId,
 		DestUserId: req.DestUserId,
 		Timestamp: req.Timestamp,
+		GRPCTime: req.GRPCTime,
 	}, nil
 }

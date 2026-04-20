@@ -7,10 +7,11 @@ import (
 )
 
 type ClientMessage struct{
-	Content string	`json:"content"`
-	SrcUserId int32 `json:"src_user_id"`
-	DestUserId int32 `json:"dest_user_id"`
-	Timestamp int64 `json:"timestamp"`
+    Content string	`json:"content"`
+    SrcUserId int32 `json:"src_user_id"`
+    DestUserId int32 `json:"dest_user_id"`
+    Timestamp int64 `json:"timestamp"`
+    GRPCTime int64  `json:"grpcTime"`
 }
 
 type Client struct {

@@ -52,18 +52,21 @@ func (g *Gateway) Process(message []byte) (*manager.ClientMessage, error){
 		SrcUserId:  WSMsg.SrcUserId,
 		DestUserId: WSMsg.DestUserId,
 		Timestamp: WSMsg.Timestamp,
+		GRPCTime: time.Now().UnixNano(),
 	})
 
 	if err != nil {
 		return nil, err // Return the error back to the ReadPump
 	}
 
+	elapsed := time.Now().UnixNano()-resp.GRPCTime
 	//return []byte(resp.Content), nil
 	return &manager.ClientMessage{
 		Content:    resp.Content,
 		SrcUserId:  resp.SrcUserId,
 		DestUserId: resp.DestUserId,
 		Timestamp: resp.Timestamp,
+		GRPCTime: elapsed,
 	}, nil
 }
 
