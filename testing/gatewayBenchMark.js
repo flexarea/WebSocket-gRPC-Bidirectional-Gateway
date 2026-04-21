@@ -1,6 +1,7 @@
 import ws from 'k6/ws';
 import { check } from 'k6';
 import { Trend } from 'k6/metrics';
+import custom from "k6/x/custom-time"
 
 const msgLatency = new Trend('msg_latency', true);
 const grpcLatency = new Trend('grpc_latency', true);
@@ -16,7 +17,7 @@ export default function () {
 
     socket.on('message', (data) => {
       const msg = JSON.parse(data);
-      const now = Date.now()*1e6
+      const now = custom.getNano()
 
       const latency = (now - msg.timestamp)/1e6;
 
@@ -32,7 +33,7 @@ export default function () {
         content: 'hello',
         src_user_id: 1,
         dest_user_id: 2,
-        timestamp: Date.now()*1e6,
+        timestamp: custom.getNano(),
         grpcTime: Date.now(),
 
       }));
@@ -45,7 +46,7 @@ export default function () {
         content: 'hello',
         src_user_id: 1,
         dest_user_id: 2,
-        timestamp: Date.now()*1e6,
+        timestamp: custom.getNano(),
         grpcTime: Date.now(),
       }));
     });
