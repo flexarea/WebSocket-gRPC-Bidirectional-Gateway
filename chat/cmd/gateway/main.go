@@ -2,15 +2,15 @@
 package main
 
 import (
-"log"
-"xchat.io/internal/gateway"
+	"log"
+	"xchat.io/internal/gateway"
 )
 
 func main() {
-err := gateway.StartServer(":8080")
-if err != nil {
-log.Fatal(err)
-}
+	err := gateway.StartServer(":8080")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 */
 
@@ -19,6 +19,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"xchat.io/internal/gateway"
 	"xchat.io/internal/manager"
@@ -31,7 +32,13 @@ import (
 func main() {
 
 	// Dial the gRPC server
-	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	grpcAddr := os.Getenv("GRPC_SERVER_ADDR")
+
+	if grpcAddr == "" {
+		grpcAddr = "localhost:50051" // fallback for local dev
+	}
+
+	conn, err := grpc.NewClient(grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
