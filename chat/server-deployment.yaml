@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xchat-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xchat-server
+  template:
+    metadata:
+      labels:
+        app: xchat-server
+    spec:
+      containers:
+      - name: xchat-server
+        image: xchat-server:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 50051
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xchat-server
+spec:
+  selector:
+    app: xchat-server
+  ports:
+  - port: 50051
+    targetPort: 50051
