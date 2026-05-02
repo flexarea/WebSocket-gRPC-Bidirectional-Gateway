@@ -1,3 +1,5 @@
+## Without Mesh
+
 ```
   █ TOTAL RESULTS
 
@@ -31,15 +33,6 @@
     ws_sessions...........: 50     4.99215/s
 
 ```
-## Bidi k3s Baseline (No Mesh)
-
-| Metric | WS+gRPC total | gRPC layer | WS overhead |
-|--------|--------------|------------|-------------|
-| req/sec | 12,573 | — | — |
-| p50 | 2.32ms | 0.400ms | 1.92ms |
-| p90 | 6.20ms | 1.58ms | 4.62ms |
-| p95 | 8.27ms | 2.10ms | 6.17ms |
-
 
 ## With Mesh (sidecar proxy)
 
