@@ -1,3 +1,36 @@
+  ## Without Mesh
+
+  █ TOTAL RESULTS
+
+    checks_total.......: 118946  11877.953943/s
+    checks_succeeded...: 100.00% 118946 out of 118946
+    checks_failed......: 0.00%   0 out of 118946
+
+    ✓ latency < 50ms
+
+    CUSTOM
+    msg_latency...........: avg=4.16ms min=257.79µs med=3.58ms max=29.64ms p(90)=7.12ms p(95)=8.93ms
+
+    EXECUTION
+    iteration_duration....: avg=10s    min=10s      med=10s    max=10.01s  p(90)=10s    p(95)=10s
+    iterations............: 50     4.993003/s
+    vus...................: 50     min=50         max=50
+    vus_max...............: 50     min=50         max=50
+
+    NETWORK
+    data_received.........: 18 MB  1.8 MB/s
+    data_sent.............: 14 MB  1.4 MB/s
+
+    GRPC
+    grpc_latency..........: avg=2.04ms min=86.32µs  med=1.8ms  max=16.69ms p(90)=3.62ms p(95)=4.45ms
+
+    WEBSOCKET
+    ws_connecting.........: avg=2.44ms min=721.22µs med=1.78ms max=12.35ms p(90)=3.85ms p(95)=4.31ms
+    ws_msgs_received......: 118946 11877.953943/s
+    ws_msgs_sent..........: 118996 11882.946946/s
+    ws_session_duration...: avg=10s    min=10s      med=10s    max=10.01s  p(90)=10s    p(95)=10s
+    ws_sessions...........: 50     4.993003/s
+
  ## With Mesh (side proxy)
 
  █ TOTAL RESULTS
