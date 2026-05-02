@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xchat-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xchat-gateway
+  template:
+    metadata:
+      labels:
+        app: xchat-gateway
+    spec:
+      containers:
+      - name: xchat-gateway
+        image: xchat-gateway:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        env:
+        - name: GRPC_SERVER_ADDR
+          value: "xchat-server:50051" # k8s DNS Name
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: xchat-gateway
+spec:
+  type: NodePort
+  selector:
+    app: xchat-gateway
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30080  # fixed port on the EC2 host

@@ -13,7 +13,7 @@ export let options = {
 };
 
 export default function () {
-  ws.connect('ws://localhost:8080/ws', {}, (socket) => {
+  ws.connect('ws://localhost:30080/ws', {}, (socket) => {
 
     socket.on('message', (data) => {
       const msg = JSON.parse(data);
