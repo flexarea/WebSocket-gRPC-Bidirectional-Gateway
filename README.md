@@ -7,9 +7,7 @@ intercepting inter-service traffic.
 
 ## Gateway & Protocols
 
-WebSocket (WS) is a browser-native HTTP/1.1 protocol for full-duplex communication, while gRPC is an HTTP/2 RPC framework. The gateway bridges these incompatible protocols, allowing WS to use gRPC services.
-
-Benchmarks were conducted using Grafana k6 with 50 concurrent virtual users (VUs) over a total duration of 10 seconds. Both baseline architectures were implemented and evaluated on the Middlebury College Ada cluster, while all K3s-related components were deployed and tested on Amazon EC2.
+WebSocket (WS) is a browser-native HTTP/1.1 protocol for full-duplex communication, while gRPC is an HTTP/2 RPC framework. The gateway bridges these incompatible protocols, allowing WS to use gRPC services. Benchmarks were conducted using Grafana k6 with 50 concurrent virtual users (VUs) over a total duration of 10 seconds.
 
 ## Baseline Architecture
 
