@@ -21,3 +21,7 @@ WebSocket (WS) is a browser-native HTTP/1.1 protocol for full-duplex communicati
 * We observe a higher throughput of 21,066/s with the bidirectional architecture, compared to 13,939/s for the unary approach, an increase of approximately 51.2%.
 
 This performance gap is likely attributed to bidirectional streaming's single connection establishment with one-time HTTP/2 header frame negotiation, followed by length-prefixed message transmission terminated by a single end-of-stream (EOS) flag. In contrast, unary calls incur per-request header frame overhead and an individual EOS for every transmitted message [1]. However, further testing would be required to confirm the extent to which these factors contribute to the observed difference.
+
+References
+
+[1][reference](https://github.com/himanshu-patel-dev/gRPC/blob/main/under_the_hood/README.md)
