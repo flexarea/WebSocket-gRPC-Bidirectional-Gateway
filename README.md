@@ -24,4 +24,4 @@ This performance gap is likely attributed to bidirectional streaming's single co
 
 References
 
-[1][reference](https://github.com/himanshu-patel-dev/gRPC/blob/main/under_the_hood/README.md)
+[1] [https://github.com/himanshu-patel-dev/gRPC/blob/main/under_the_hood/README.md](https://github.com/himanshu-patel-dev/gRPC/blob/main/under_the_hood/README.md)
